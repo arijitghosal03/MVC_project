@@ -1,3 +1,4 @@
 server/.env
 server/go.sum
 server/main.exe
+frontend/.env

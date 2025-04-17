@@ -1505,15 +1505,15 @@ const Resturantpage = () => {
                 </motion.div>
               </div>
               
-              <h3 className="mb-3">Thank You, {customerInfo.name}!</h3>
-              <p className="mb-2">
+              <h3 className="mb-3 text-dark">Thank You, {customerInfo.name}!</h3>
+              <p className="mb-2 text-dark">
                 Your order has been received and is being prepared.
               </p>
               <div className="order-number mt-4 mb-4">
                 <p className="text-muted mb-1">Your order number</p>
                 <h2 className="text-warning">#{orderNumber}</h2>
               </div>
-              <p className="text-muted mb-4">
+              <p className="text-muted mb-4 text-dark">
                 You can check the status of your order with your server.
               </p>
               <Button
@@ -1823,17 +1823,7 @@ body {
   100% { transform: scale(1.15) rotate(360deg); }
 }
 
-/* Hero Section with enhanced parallax */
-.hero-section {
-  background: linear-gradient(var(--overlay-dark), var(--overlay-dark)),
-    url("/api/placeholder/1920/1080");
-  background-size: cover;
-  background-position: center;
-  padding: 8rem 0;
-  position: relative;
-  color: white;
-  overflow: hidden;
-}
+
 
 .parallax-bg {
   background-attachment: fixed;
