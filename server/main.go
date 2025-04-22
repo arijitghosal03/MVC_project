@@ -25,8 +25,8 @@ func main() {
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		AllowCredentials: true,
 	}))
-
-
+   
+	router.POST("/api/auth/login", routes.Login)
     router.GET("/orders", routes.GetOrders)
 	// Original endpoints
 	router.POST("/order/create", routes.AddOrder)

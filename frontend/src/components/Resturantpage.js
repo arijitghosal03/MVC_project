@@ -800,7 +800,7 @@ const Resturantpage = () => {
   </div>
     
    
-    <Link to="/admin/menu">
+    <Link to="/login">
       <div style={{ 
         position: 'absolute',
         right: '50px',

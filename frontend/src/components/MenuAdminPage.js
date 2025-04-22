@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import './MenuAdminPage.css';
 import { Link} from 'react-router-dom';
+import { useAuth } from './AuthContext';
+
 const MenuAdminPage = () => {
+  const { user, logout } = useAuth();
+  useEffect(() => {
+    // Execute logout function when component mounts
+    logout();
+  }, [logout]);
   // State management
   const [menuItems, setMenuItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
@@ -215,14 +222,38 @@ const MenuAdminPage = () => {
     
     setFilteredItems(result);
   }, [menuItems, searchQuery, sortConfig]);
-
+  const fetchWithAuth = async (url, options = {}) => {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+    
+    const headers = {
+      ...options.headers,
+      'Authorization': `Bearer ${token}`
+    };
+    
+    const response = await fetch(url, {
+      ...options,
+      headers,
+    });
+    
+    if (response.status === 401) {
+      // Token expired or invalid - logout
+      logout();
+      throw new Error('Authentication expired');
+    }
+    
+    return response;
+  };
   const fetchMenuItems = async () => {
     try {
       setIsLoading(true);
       
       // FIX: Using proper API URL with error handling
       const API_URL = 'http://localhost:5000/menu-items';
-      const response = await fetch(API_URL, {
+      const response = await fetchWithAuth(API_URL, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -254,7 +285,7 @@ const MenuAdminPage = () => {
       
       // FIX: Using proper API URL with error handling
       const API_URL = 'http://localhost:5000/api/reservations';
-      const response = await fetch(API_URL, {
+      const response = await fetchWithAuth(API_URL, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -440,8 +471,10 @@ const MenuAdminPage = () => {
   };
 
   const handleEdit = (item) => {
+    console.log('Editing item:', item);
     setEditingItem(item);
     setFormData({
+      id: item.id,
       name: item.name,
       description: item.description,
       price: item.price.toString(),
@@ -451,13 +484,56 @@ const MenuAdminPage = () => {
     });
     setSelectedSpecials(item.specials || []);
     setShowAddItemModal(true);
+    console.log(item);
+    // Removed the premature API call from here as it should happen on form submission
+  };
+  
+  // This function should be called when the edit form is submitted
+  const handleEditSubmit = async () => {
+    setIsSubmitting(true);
+    console.log(formData);
+    try {
+      const API_URL = `http://localhost:5000/menu-items/${formData.id}`;
+      console.log('API URL:', API_URL);
+      const response = await fetch(API_URL, {
+        method: 'PUT', // Changed from POST to PUT for updates
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          description: formData.description,
+          price: parseFloat(formData.price),
+          category: formData.category,
+          image: formData.image,
+          rating: formData.rating,
+          specials: selectedSpecials
+        })
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to update menu item');
+      }
+  
+      showNotification('Item updated successfully', 'success');
+      fetchMenuItems(); // Uncomment this to refresh the menu items
+      resetForm();
+      setShowAddItemModal(false);
+      setEditingItem(null);
+    } catch (error) {
+      console.error('Error updating menu item:', error);
+      showNotification('Failed to update menu item', 'danger');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this item?')) {
       try {
         // FIX: Proper API URL and headers
-        const API_URL = `http://localhost:5000/menu-items${editingItem ? `/${editingItem._id}` : ''}`;
+        const API_URL = `http://localhost:5000/menu-items/${id}`;
+        console.log('API URL:', API_URL);
         const response = await fetch(API_URL, {
           method: 'DELETE',
           headers: {
@@ -477,6 +553,7 @@ const MenuAdminPage = () => {
       }
     }
   };
+  
   const handleAddCategory = () => {
     if (newCategory && !categories.includes(newCategory)) {
       setCategories([...categories, newCategory]);
@@ -542,11 +619,15 @@ const MenuAdminPage = () => {
           <div className="user-info">
             <div className="user-avatar">JD</div>
             <div className="user-details">
-              <p className="user-name">Arijit Ghosal</p>
-              <p className="user-role">Admin</p>
-            </div>
-          </div>
-        </div>
+        <p className="user-name">{user?.username || 'Admin User'}</p>
+        <p className="user-role">{user?.role || 'Admin'}</p>
+      </div>
+    </div>
+    <button onClick={logout} className="logout-button">
+      Logout
+    </button>
+  </div>
+        
         <Link to="/">
         <div className="back-button" style={{fontWeight: 'bold', color: '#fff'}}>&larr; Back</div>
         </Link>
@@ -730,13 +811,18 @@ const MenuAdminPage = () => {
                             <td className="actions-cell">
                               <button 
                                 className="btn-icon edit"
-                                onClick={() => handleEdit(item)}
+                                onClick={() => handleEdit(item)} 
                               >
                                 ✏️
                               </button>
                               <button 
                                 className="btn-icon delete"
-                                onClick={() => handleDelete(item._id)}
+                                onClick={() => {
+                                  console.log('Deleting item with id:', item.id);
+                                  handleDelete(item.id);
+                                }
+                                  
+                                }
                               >
                                 🗑️
                               </button>
@@ -897,7 +983,7 @@ const MenuAdminPage = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    placeholder="e.g. Bruschetta"
+                    placeholder="Enter dish name"
                     required
                     className="form-input"
                   />
@@ -924,7 +1010,7 @@ const MenuAdminPage = () => {
                       name="price"
                       value={formData.price}
                       onChange={handleInputChange}
-                      placeholder="e.g. 12.99"
+                      placeholder="Price in INR"
                       required
                       className="form-input"
                     />
@@ -1011,20 +1097,12 @@ const MenuAdminPage = () => {
                     Cancel
                   </button>
                   <button 
-                    type="submit"
-                    className="btn-primary"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <span className="loading-text">
-                        {editingItem ? 'Updating...' : 'Saving...'}
-                      </span>
-                    ) : (
-                      <span>
-                        {editingItem ? 'Update Item' : 'Save Item'}
-                      </span>
-                    )}
-                  </button>
+    className="btn btn-primary" 
+    onClick={handleEditSubmit} 
+    disabled={isSubmitting}
+  >
+    {isSubmitting ? 'Saving...' : 'Save Changes'}
+  </button>
                 </div>
               </form>
             </div>
