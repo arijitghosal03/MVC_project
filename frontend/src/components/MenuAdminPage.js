@@ -553,7 +553,7 @@ const MenuAdminPage = () => {
       }
     }
   };
-  
+
   const handleAddCategory = () => {
     if (newCategory && !categories.includes(newCategory)) {
       setCategories([...categories, newCategory]);
@@ -576,7 +576,7 @@ const MenuAdminPage = () => {
     if (sortConfig.key !== key) return "↕";
     return sortConfig.direction === 'asc' ? "↑" : "↓";
   };
-  
+
   return (
     <div className="restaurant-admin">
       {/* Sidebar */}
@@ -718,10 +718,10 @@ const MenuAdminPage = () => {
                 {isEditingCategory && (
                   <div className="category-form">
                     <input
-                      type="text"
-                      value={newCategory}
-                      onChange={(e) => setNewCategory(e.target.value)}
-                      placeholder="New category name"
+                    type="text"
+                    value={newCategory}
+                    onChange={(e) => setNewCategory(e.target.value)}
+                    placeholder="New category name"
                       className="form-input"
                     />
                     <button 
@@ -757,39 +757,39 @@ const MenuAdminPage = () => {
                 ) : filteredItems.length === 0 ? (
                   <div className="empty-results">
                     <p>No menu items found. Try adjusting your search or add a new item.</p>
-                  </div>
-                ) : (
+              </div>
+            ) : (
                   <div className="table-container">
                     <table className="menu-items-table">
-                      <thead>
-                        <tr>
+                  <thead>
+                    <tr>
                           <th onClick={() => handleSort('name')} className="sortable-header">
                             Item {getSortIcon('name')}
                           </th>
-                          <th>Description</th>
+                      <th>Description</th>
                           <th onClick={() => handleSort('price')} className="sortable-header">
                             Price {getSortIcon('price')}
                           </th>
                           <th onClick={() => handleSort('category')} className="sortable-header">
                             Category {getSortIcon('category')}
                           </th>
-                          <th>Specials</th>
+                      <th>Specials</th>
                           <th className="text-right">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
+                    </tr>
+                  </thead>
+                  <tbody>
                         {filteredItems.map((item) => (
                           <tr key={item._id} className="menu-item-row">
                             <td>
                               <div className="item-name">
                                 {item.name}
-                              </div>
-                            </td>
-                            <td>
+                          </div>
+                        </td>
+                        <td>
                               <p className="item-description">
-                                {item.description}
-                              </p>
-                            </td>
+                            {item.description}
+                          </p>
+                        </td>
                             <td className="item-price">₹{item.price.toFixed(2)}</td>
                             <td>
                               <span className="category-badge small">
@@ -798,16 +798,16 @@ const MenuAdminPage = () => {
                             </td>
                             <td>
                               <div className="specials-container">
-                                {item.specials && item.specials.map((special, index) => (
+                            {item.specials && item.specials.map((special, index) => (
                                   <span 
                                     key={index} 
                                     className="special-badge"
                                   >
                                     {special}
                                   </span>
-                                ))}
-                              </div>
-                            </td>
+                            ))}
+                          </div>
+                        </td>
                             <td className="actions-cell">
                               <button 
                                 className="btn-icon edit"
@@ -826,13 +826,13 @@ const MenuAdminPage = () => {
                               >
                                 🗑️
                               </button>
-                            </td>
+                        </td>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
               </div>
             </div>
           </div>
@@ -979,12 +979,12 @@ const MenuAdminPage = () => {
                 <div className="form-group">
                   <label>Item Name *</label>
                   <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
                     placeholder="Enter dish name"
-                    required
+                required
                     className="form-input"
                   />
                 </div>
@@ -992,11 +992,11 @@ const MenuAdminPage = () => {
                 <div className="form-group">
                   <label>Description *</label>
                   <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    placeholder="Describe the menu item"
-                    required
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Describe the menu item"
+                required
                     className="form-textarea"
                     rows="3"
                   ></textarea>
@@ -1006,12 +1006,12 @@ const MenuAdminPage = () => {
                   <div className="form-group">
                     <label>Price (₹) *</label>
                     <input
-                      type="text"
-                      name="price"
-                      value={formData.price}
-                      onChange={handleInputChange}
+                type="text"
+                name="price"
+                value={formData.price}
+                onChange={handleInputChange}
                       placeholder="Price in INR"
-                      required
+                required
                       className="form-input"
                     />
                   </div>
@@ -1019,14 +1019,14 @@ const MenuAdminPage = () => {
                   <div className="form-group">
                     <label>Category</label>
                     <select
-                      name="category"
-                      value={formData.category}
-                      onChange={handleInputChange}
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
                       className="form-select"
-                    >
-                      {categories.map((category, index) => (
-                        <option key={index} value={category}>{category}</option>
-                      ))}
+              >
+                {categories.map((category, index) => (
+                  <option key={index} value={category}>{category}</option>
+                ))}
                     </select>
                   </div>
                 </div>
@@ -1036,12 +1036,12 @@ const MenuAdminPage = () => {
                   <div className="rating-container">
                     <input
                       type="range"
-                      min="1"
-                      max="5"
-                      step="0.1"
-                      name="rating"
-                      value={formData.rating}
-                      onChange={handleInputChange}
+                min="1"
+                max="5"
+                step="0.1"
+                name="rating"
+                value={formData.rating}
+                onChange={handleInputChange}
                       className="rating-slider"
                     />
                     <div className="rating-value">
@@ -1054,9 +1054,9 @@ const MenuAdminPage = () => {
                   <label>Image</label>
                   <div className="image-upload">
                     <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
                       className="file-input"
                       id="image-upload"
                     />
@@ -1069,22 +1069,22 @@ const MenuAdminPage = () => {
                       </div>
                     )}
                   </div>
-                </div>
+              </div>
 
                 <div className="form-group">
                   <label>Specials</label>
                   <div className="specials-selector">
-                    {availableSpecials.map((special, index) => (
+                {availableSpecials.map((special, index) => (
                       <button
-                        key={index}
+                    key={index}
                         type="button"
                         className={`special-toggle ${selectedSpecials.includes(special) ? 'active' : ''}`}
-                        onClick={() => handleSpecialToggle(special)}
-                      >
-                        {special}
+                    onClick={() => handleSpecialToggle(special)}
+                  >
+                    {special}
                       </button>
-                    ))}
-                  </div>
+                ))}
+              </div>
                 </div>
 
                 <div className="form-actions">
@@ -1094,7 +1094,7 @@ const MenuAdminPage = () => {
                     onClick={() => { setShowAddItemModal(false); resetForm(); }}
                     disabled={isSubmitting}
                   >
-                    Cancel
+                Cancel
                   </button>
                   <button 
     className="btn btn-primary" 
